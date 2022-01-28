@@ -2,12 +2,12 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
+
+# from sqlalchemy.orm import relationship
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://testuser:M7astUUFKxOAxvo88Tb3Bp6JRUJEi1Nv6xfyyy6w@34.125.185.200/products"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://testuser:M7astUUFKxOAxvo88Tb3Bp6JRUJEi1Nv6xfyyy6w@34.125.65.175/products"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -100,20 +100,16 @@ def products():
         if request.is_json:
             json = request.get_json()
             new_product = Products.from_json(json)
-            # print(json)
-            # new_product = ProductsModel(seller_service_id=data['seller_service_id'], user_id=data['user_id'], product_id=data['product_id'], product_type=data['product_type'], rate=data['rate'], cost=data['cost'], promocode=data['promocode'], discount=data['discount'], payment_cost=data['payment_cost'], note=data['note'], date=data['date'])
-            # print(new_product)
             db.session.add(new_product)
             db.session.commit()
-            # return {"message": f"product {new_product.sale_id} has been created successfully."}
             return jsonify(new_product.to_dict()), 200
-            # return jsonify([new_product.to_dict() for new_product in ProductsModel.query.all()]), 200
         else:
             return {"error": "The request payload is not in JSON format"}
 
-    elif request.method == 'GET':
-        products = Products.query.all()
-        results = [
+@app.route('/products/<sale_id>', methods=['POST', 'GET'])
+def sales(sale_id):
+    products = Products.query.filter_by(sale_id=sale_id)
+    results = [
             {
                 "sale_id": product.sale_id,
                 "seller_service_id": product.seller_service_id,
@@ -129,7 +125,8 @@ def products():
                 "date": product.date
             } for product in products]
 
-        return {"count": len(results), "cars": results}
+    return {"products": results}
+
 
 
 if __name__ == '__main__':
