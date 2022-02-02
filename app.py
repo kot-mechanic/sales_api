@@ -1,14 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_httpauth import HTTPBasicAuth
+import time
 
 
-
-from products_api.model.models import db, Products
+from products_api.model.models import db, Products, Seller_services
 
 # from sqlalchemy.orm import relationship
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://testuser:M7astUUFKxOAxvo88Tb3Bp6JRUJEi1Nv6xfyyy6w@34.125.65.175/products"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://testuser:M7astUUFKxOAxvo88Tb3Bp6JRUJEi1Nv6xfyyy6w@34.125.14.249/products"
 
 auth = HTTPBasicAuth()
 user = {'login': 'service', 'password': 'ScaNTestrApToWeITERaCEmanTALaver'}
@@ -27,6 +27,16 @@ def hello():
     return {"hello": "world"}
 
 
+@app.route('/seller_services', methods=['POST', 'GET'])
+@auth.login_required
+def get_seller_services():
+    ss = Seller_services.query.all()
+    results = [
+            {
+                'seller_service_id': s.seller_service_id,
+                'name': s.name
+            } for s in ss]
+    return {"seller_services": results}
 
 @app.route('/products', methods=['POST', 'GET'])
 @auth.login_required
@@ -34,6 +44,7 @@ def products():
     if request.method == 'POST':
         if request.is_json:
             json = request.get_json()
+            json['date'] = int(time.time())
             new_product = Products.from_json(json)
             db.session.add(new_product)
             db.session.commit()
@@ -60,7 +71,6 @@ def sales(sale_id):
                 "note": product.note,
                 "date": product.date
             } for product in products]
-
     return {"products": results}
 
 
