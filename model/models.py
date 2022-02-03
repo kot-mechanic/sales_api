@@ -30,7 +30,7 @@ class Seller_services(db.Model):
     #     return f""
 
 
-class Products(db.Model):
+class Sales(db.Model):
     # __tablename__ = 'products'
 
     sale_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -69,7 +69,7 @@ class Products(db.Model):
 
     @staticmethod
     def from_json(json):
-        return Products(
+        return Sales(
             sale_id=json.get('sale_id', None),
             seller_service_id=json.get('seller_service_id', None),
             user_id=json.get('user_id', None),
