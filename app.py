@@ -42,7 +42,7 @@ def get_seller_services():
 
 @app.route('/sales', methods=['POST', 'GET'])
 @auth.login_required
-def products():
+def sales():
     if request.method == 'POST':
         if request.is_json:
             json = request.get_json()
@@ -56,19 +56,20 @@ def products():
 
     if request.method == 'GET':
         s = Sales.query.with_entities(Sales.sale_id, Sales.date).all()
-        print(s)
-        # print(jsonify(s.to_dict()))
-        # print(jsonify(s.sale_id.to_dict(), s.date.to_dict()))
-        # return jsonify(sale_id=s.sale_id, date=s.date), 200
-        # return jsonify(sale_id=s[0], date=s[1]), 200
-        # return jsonify(s.to_dict(sale_id, date)), 200
-        return jsonify(s), 200
-        # return {"sales": jsonify(s)}, 200
-    # {"sales": results}
+        results = [
+            {
+                "sale_id": sale.sale_id,
+                "date": sale.date
+            } for sale in s]
+        return {"sales": results}, 200
+        # print(s)
+        # # return {"sales": jsonify(s)}, 200
+        # return jsonify(s), 200
+
 
 @app.route('/sales/<sale_id>', methods=['POST', 'GET'])
 @auth.login_required
-def sales(sale_id):
+def saleinfo(sale_id):
     if request.method == 'GET':
         sales = Sales.query.filter_by(sale_id=sale_id)
         results = [
@@ -86,19 +87,28 @@ def sales(sale_id):
                 "note": sale.note,
                 "date": sale.date
                 } for sale in sales]
-        return {"sale": results}
+        return {"sale": results}, 200
 
-    # if request.method == 'POST':
-
-@app.route('/sales/sales', methods=['GET'])
-@auth.login_required
-def getsales():
-    if request.method == 'GET':
+    if request.method == 'POST':
+        sales = Sales.query.filter_by(sale_id=sale_id)
+        if not request.is_json:
+            return jsonify({'error': 'Body is not json.', 'success': None}), 403
         json = request.get_json()
-        saleid = json.get('sale_id')
-        print(str(saleid))
-        # p = Sales.query.filter_by(sale_id in (saleid))
-        # print(p)
+        sales.update(json)
+        db.session.commit()
+        return jsonify(sales.first().to_dict()), 200
+    else:
+        return jsonify(sales.first().to_dict()), 200
+
+# @app.route('/sales/sales', methods=['GET'])
+# @auth.login_required
+# def getsales():
+#     if request.method == 'GET':
+#         json = request.get_json()
+#         saleid = json.get('sale_id')
+#         print(str(saleid))
+#         # p = Sales.query.filter_by(sale_id in (saleid))
+#         # print(p)
 
 
 
