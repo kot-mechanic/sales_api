@@ -24,6 +24,7 @@ def verify_password(username, password):
 @app.route('/seller_services', methods=['POST', 'GET'])
 @auth.login_required
 def get_seller_services():
+# Получить список seller_services
     if request.method == 'GET':
         ss = Seller_services.query.all()
         results = [
@@ -32,7 +33,7 @@ def get_seller_services():
                 'name': s.name
                 } for s in ss]
         return {"seller_services": results}
-
+# Добавить seller_services
     if request.method == 'POST':
         json = request.get_json()
         ss = Seller_services.from_json(json)
@@ -43,6 +44,7 @@ def get_seller_services():
 @app.route('/sales', methods=['POST', 'GET'])
 @auth.login_required
 def sales():
+# Добавление информации о продаже
     if request.method == 'POST':
         if request.is_json:
             json = request.get_json()
@@ -53,7 +55,7 @@ def sales():
             return jsonify(new_sale.to_dict()), 200
         else:
             return {"error": "The request payload is not in JSON format"}
-
+# Чтение списка sale_id+date по всем продажам
     if request.method == 'GET':
         s = Sales.query.with_entities(Sales.sale_id, Sales.date).all()
         results = [
@@ -62,16 +64,14 @@ def sales():
                 "date": sale.date
             } for sale in s]
         return {"sales": results}, 200
-        # print(s)
-        # # return {"sales": jsonify(s)}, 200
-        # return jsonify(s), 200
 
 
-@app.route('/sales/<sale_id>', methods=['POST', 'GET'])
+@app.route('/sales/<sale_id>', methods=['POST', 'GET', 'DELETE'])
 @auth.login_required
 def saleinfo(sale_id):
+    sales = Sales.query.filter_by(sale_id=sale_id)
+# Получение информации по конкретной продаже
     if request.method == 'GET':
-        sales = Sales.query.filter_by(sale_id=sale_id)
         results = [
                 {
                 "sale_id": sale.sale_id,
@@ -88,17 +88,21 @@ def saleinfo(sale_id):
                 "date": sale.date
                 } for sale in sales]
         return {"sale": results}, 200
-
+# Обновление информации по продаже
     if request.method == 'POST':
-        sales = Sales.query.filter_by(sale_id=sale_id)
         if not request.is_json:
             return jsonify({'error': 'Body is not json.', 'success': None}), 403
         json = request.get_json()
         sales.update(json)
         db.session.commit()
         return jsonify(sales.first().to_dict()), 200
-    else:
-        return jsonify(sales.first().to_dict()), 200
+# Удаление информации о продаже
+    if request.method == 'DELETE':
+        result = sales.delete()
+        db.session.commit()
+        return jsonify({'error': None, 'success': result}), 200
+
+
 
 # @app.route('/sales/sales', methods=['GET'])
 # @auth.login_required
