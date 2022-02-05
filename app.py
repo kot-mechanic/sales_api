@@ -93,6 +93,7 @@ def saleinfo(sale_id):
         if not request.is_json:
             return jsonify({'error': 'Body is not json.', 'success': None}), 403
         json = request.get_json()
+        json['date'] = int(time.time())
         sales.update(json)
         db.session.commit()
         return jsonify(sales.first().to_dict()), 200
