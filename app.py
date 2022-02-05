@@ -106,6 +106,7 @@ def saleinfo(sale_id):
 @app.route('/sales/multiple_sales', methods=['GET'])
 @auth.login_required
 def getsales():
+# Получение информации по нескольким продажам
     if request.method == 'GET':
         json = request.get_json()
         saleid = json.get('sale_id')
