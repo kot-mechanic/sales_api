@@ -103,16 +103,29 @@ def saleinfo(sale_id):
         return jsonify({'error': None, 'success': result}), 200
 
 
-
-# @app.route('/sales/sales', methods=['GET'])
-# @auth.login_required
-# def getsales():
-#     if request.method == 'GET':
-#         json = request.get_json()
-#         saleid = json.get('sale_id')
-#         print(str(saleid))
-#         # p = Sales.query.filter_by(sale_id in (saleid))
-#         # print(p)
+@app.route('/sales/multiple_sales', methods=['GET'])
+@auth.login_required
+def getsales():
+    if request.method == 'GET':
+        json = request.get_json()
+        saleid = json.get('sale_id')
+        sales = Sales.query.filter(Sales.sale_id.in_(saleid)).all()
+        results = [
+                {
+                "sale_id": sale.sale_id,
+                "seller_service_id": sale.seller_service_id,
+                "user_id": sale.user_id,
+                "product_id": sale.product_id,
+                "product_type": sale.product_type,
+                "rate": sale.rate,
+                "cost": sale.cost,
+                "promocode": sale.promocode,
+                "discount": sale.discount,
+                "payment_cost": sale.payment_cost,
+                "note": sale.note,
+                "date": sale.date
+                } for sale in sales]
+        return {"sale": results}, 200
 
 
 
