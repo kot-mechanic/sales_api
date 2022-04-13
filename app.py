@@ -140,7 +140,7 @@ def custom_request():
     product_type = json.get('product_type')
     product_id = json.get('product_id')
     sale_id = json.get('sale_id')
-    s = """Sales.query.filter(Sales.user_id == user_id, Sales.product_type == product_type, Sales.product_id == product_id, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(3)"""
+    s = """Sales.query.filter(Sales.user_id == user_id, Sales.product_type == product_type, Sales.product_id == product_id, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(100)"""
     if sale_id is None:
         s = s.replace(""", Sales.sale_id < sale_id""", """""")
     if user_id is None:
