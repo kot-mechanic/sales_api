@@ -132,7 +132,7 @@ def getsales():
         return {"sale": results}, 200
 
 
-@app.route('/sales/request', methods=['GET'])
+@app.route('/sales/request', methods=['POST'])
 @auth.login_required
 def custom_request():
     json = request.get_json()
