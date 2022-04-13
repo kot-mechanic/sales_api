@@ -154,7 +154,7 @@ def custom_request():
     sales = eval(s)
     print(sales)
 # Получение информации по конкретной продаже
-    if request.method == 'GET':
+    if request.method == 'POST':
         results = [
                 {
                 "sale_id": sale.sale_id,
