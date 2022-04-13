@@ -45,6 +45,7 @@ class Sales(db.Model):
     payment_cost = db.Column(db.Integer)
     note = db.Column(db.String(200))
     date = db.Column(db.BigInteger)
+    available = db.Column(db.Boolean("available"))
 
     # def __init__(self, sale_id, seller_service_id, user_id, product_id, product_type, rate, cost, promocode, discount, payment_cost, note, date):
     def to_dict(self):
@@ -60,7 +61,8 @@ class Sales(db.Model):
             'discount': self.discount,
             'payment_cost': self.payment_cost,
             'note': self.note,
-            'date': self.date
+            'date': self.date,
+            'available': self.available
         }
 
 
@@ -81,5 +83,6 @@ class Sales(db.Model):
             discount=json.get('discount', True),
             payment_cost=json.get('payment_cost', None),
             note=json.get('note', False),
-            date=json.get('date', False)
+            date=json.get('date', False),
+            available=json.get('available', True)
         )

@@ -85,7 +85,8 @@ def saleinfo(sale_id):
                 "discount": sale.discount,
                 "payment_cost": sale.payment_cost,
                 "note": sale.note,
-                "date": sale.date
+                "date": sale.date,
+                "available": sale.available
                 } for sale in sales]
         return {"sale": results}, 200
 # Обновление информации по продаже
@@ -125,7 +126,8 @@ def getsales():
                 "discount": sale.discount,
                 "payment_cost": sale.payment_cost,
                 "note": sale.note,
-                "date": sale.date
+                "date": sale.date,
+                "available": sale.available
                 } for sale in sales]
         return {"sale": results}, 200
 
@@ -138,18 +140,6 @@ def custom_request():
     product_type = json.get('product_type')
     product_id = json.get('product_id')
     sale_id = json.get('sale_id')
-    # sales = Sales.query.filter_by(user_id=user_id, product_type=product_type, product_id=product_id).order_by(Sales.sale_id.desc()).limit(3)
-    # if user_id is not None and product_type is not None and product_id is not None and sale_id is not None:
-    #     sales = Sales.query.filter(Sales.user_id==user_id, Sales.product_type==product_type, Sales.product_id==product_id, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(3)
-    # if user_id is not None and product_type is not None and product_id is None and sale_id is not None:
-    #     sales = Sales.query.filter(Sales.user_id == user_id, Sales.product_type == product_type, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(3)
-    # if user_id is not None and product_type is not None and product_id is not None and sale_id is None:
-    #     sales = Sales.query.filter(Sales.user_id==user_id, Sales.product_type==product_type, Sales.product_id==product_id).order_by(Sales.sale_id.desc()).limit(3)
-    # if user_id is not None and product_type is None and product_id is not None and sale_id is not None:
-    #     sales = Sales.query.filter(Sales.user_id==user_id, Sales.product_id==product_id, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(3)
-    # if user_id is  None and product_type is not None and product_id is not None and sale_id is not None:
-    #     sales = Sales.query.filter(Sales.product_type==product_type, Sales.product_id==product_id, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(3)
-    # sales = Sales.query.filter(Sales.user_id == user_id, Sales.product_type == product_type, Sales.product_id == product_id, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(3)
     s = """Sales.query.filter(Sales.user_id == user_id, Sales.product_type == product_type, Sales.product_id == product_id, Sales.sale_id < sale_id).order_by(Sales.sale_id.desc()).limit(3)"""
     if sale_id is None:
         s = s.replace(""", Sales.sale_id < sale_id""", """""")
@@ -178,7 +168,8 @@ def custom_request():
                 "discount": sale.discount,
                 "payment_cost": sale.payment_cost,
                 "note": sale.note,
-                "date": sale.date
+                "date": sale.date,
+                "available": sale.available
                 } for sale in sales]
         return {"sale": results}, 200
 
