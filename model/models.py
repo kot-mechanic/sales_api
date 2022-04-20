@@ -86,3 +86,30 @@ class Sales(db.Model):
             date=json.get('date', False),
             available=json.get('available', True)
         )
+
+
+class Payments(db.Model):
+    payment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    sale_id = db.Column(db.Integer, ForeignKey('sales.sale_id'), primary_key=True)
+    payment_cost = db.Column(db.Integer)
+    refund = db.Column(db.Boolean("refund"))
+    date = db.Column(db.BigInteger)
+
+    def to_dict(self):
+        return {
+            'payment_id': self.payment_id,
+            'sale_id': self.sale_id,
+            'payment_cost': self.payment_cost,
+            'refund': self.refund,
+            'date': self.date
+        }
+
+    @staticmethod
+    def from_json(json):
+        return Payments(
+            payment_id=json.get('payment_id', None),
+            sale_id=json.get('sale_id', None),
+            payment_cost=json.get('payment_cost', None),
+            refund=json.get('refund', False),
+            date=json.get('date', False)
+        )
