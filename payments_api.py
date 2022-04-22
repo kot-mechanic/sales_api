@@ -1,8 +1,11 @@
 from flask import Blueprint, request, jsonify
 from flask_httpauth import HTTPBasicAuth
 import time
+import psycopg2
 
-from model.models import db, Payments
+
+
+from model.models import db, Payments, Sales
 
 payments_blueprint = Blueprint('payments_blueprint', __name__)
 
@@ -17,11 +20,16 @@ def verify_password(username, password):
 @payments_blueprint.route('/payments', methods=['POST', 'GET'])
 @auth.login_required
 def payments():
-# Добавление информации о продаже
+# Добавление информации об оплате
     if request.method == 'POST':
         if request.is_json:
             json = request.get_json()
-            # print(json)
+            conn = psycopg2.connect(host="95.165.131.159", database="sales", user="salesowner", password="DESb05XQlEKWdkLGVGjMCNFLhE4oQF")
+            update_sale = """update sales set payment_cost=payment_cost+'"""+str(json['payment_cost'])+"""', date='"""+str(int(time.time()))+"""' where sale_id="""+str(json['sale_id'])
+            cur = conn.cursor()
+            cur.execute(update_sale)
+            cur.execute("""commit""")
+            conn.close()
             json['date'] = int(time.time())
             new_payment = Payments.from_json(json)
             # print(new_payment)
