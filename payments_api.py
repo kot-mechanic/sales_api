@@ -17,7 +17,7 @@ def verify_password(username, password):
     if username == user['login'] and password == user['password']:
         return username
 
-@payments_blueprint.route('/payments', methods=['POST', 'GET'])
+@payments_blueprint.route('/payments', methods=['POST', 'GET', 'DELETE'])
 @auth.login_required
 def payments():
 # Добавление информации об оплате
@@ -28,7 +28,8 @@ def payments():
             update_sale = """update sales set payment_cost=payment_cost+'"""+str(json['payment_cost'])+"""', date='"""+str(int(time.time()))+"""' where sale_id="""+str(json['sale_id'])
             cur = conn.cursor()
             cur.execute(update_sale)
-            cur.execute("""commit""")
+            # cur.execute("""commit""")
+            conn.commit()
             conn.close()
             json['date'] = int(time.time())
             new_payment = Payments.from_json(json)
@@ -38,12 +39,31 @@ def payments():
             return jsonify(new_payment.to_dict()), 200
         else:
             return {"error": "The request payload is not in JSON format"}
-# Чтение списка sale_id+date по всем продажам
-#     if request.method == 'GET':
-#         s = Sales.query.with_entities(Sales.sale_id, Sales.date).all()
-#         results = [
-#             {
-#                 "sale_id": sale.sale_id,
-#                 "date": sale.date
-#             } for sale in s]
-#         return {"sales": results}, 200
+# Удаление информации об оплате
+    if request.method == 'DELETE':
+        if request.is_json:
+            json = request.get_json()
+            # check_payment_exist(str(json['payment_id']))
+            payment_data = Payments.query.filter_by(payment_id=json['payment_id']).first()
+            if payment_data is None:
+                # print("Нету")
+                return {"error": "Payment_id "+str(json['payment_id'])+" does not exist"}
+            if payment_data is not None:
+                # print("Есть")
+                conn = psycopg2.connect(host="95.165.131.159", database="sales", user="salesowner", password="DESb05XQlEKWdkLGVGjMCNFLhE4oQF")
+                update_sale = """update sales set payment_cost=payment_cost-(select payment_cost from payments where payment_id='"""+str(json['payment_id'])+"""'), date='"""+str(int(time.time()))+"""' where sale_id=(select sale_id from payments where payment_id='"""+str(json['payment_id'])+"""')"""
+                cur = conn.cursor()
+                cur.execute(update_sale)
+                conn.commit()
+                conn.close()
+                json['date'] = int(time.time())
+                payment_data = Payments.query.filter_by(payment_id=json['payment_id']).first()
+                db.session.delete(payment_data)
+                db.session.commit()
+                return jsonify(payment_data.to_dict()), 200
+        else:
+            return {"error": "The request payload is not in JSON format"}
+
+# def check_payment_exist(payment_id):
+#     payment_data = Payments.query.filter_by(payment_id=payment_id).first()
+#     print(payment_data)
