@@ -62,6 +62,37 @@ def payments():
         else:
             return {"error": "The request payload is not in JSON format"}
 
+
+@payments_blueprint.route('/payments/payment_id/<payment_id>', methods=['POST'])
+@auth.login_required
+def paymentinfo_by_p(payment_id):
+    if request.method == 'POST':
+        data = Payments.query.filter_by(payment_id=payment_id).all()
+        results = [
+            {
+                "payment_id": payment.payment_id,
+                "sale_id": payment.sale_id,
+                "payment_cost": payment.payment_cost,
+                "refund": payment.refund,
+                "date": payment.date
+            } for payment in data]
+        return {"payments": results}, 200
+
+@payments_blueprint.route('/payments/sale_id/<sale_id>', methods=['POST'])
+@auth.login_required
+def paymentinfo_by_s(sale_id):
+    if request.method == 'POST':
+        data = Payments.query.filter_by(sale_id=sale_id).all()
+        results = [
+            {
+                "payment_id": payment.payment_id,
+                "sale_id": payment.sale_id,
+                "payment_cost": payment.payment_cost,
+                "refund": payment.refund,
+                "date": payment.date
+            } for payment in data]
+        return {"payments": results}, 200
+
 # def check_payment_exist(payment_id):
 #     payment_data = Payments.query.filter_by(payment_id=payment_id).first()
 #     print(payment_data)
