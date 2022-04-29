@@ -46,10 +46,8 @@ def payments():
             # check_payment_exist(str(json['payment_id']))
             payment_data = Payments.query.filter_by(payment_id=json['payment_id']).first()
             if payment_data is None:
-                # print("Нету")
                 return {"error": "Payment_id "+str(json['payment_id'])+" does not exist"}
             if payment_data is not None:
-                # print("Есть")
                 conn = psycopg2.connect(host="95.165.131.159", database="sales", user="salesowner", password="DESb05XQlEKWdkLGVGjMCNFLhE4oQF")
                 update_sale = """update sales set payment_cost=payment_cost-(select payment_cost from payments where payment_id='"""+str(json['payment_id'])+"""'), date='"""+str(int(time.time()))+"""' where sale_id=(select sale_id from payments where payment_id='"""+str(json['payment_id'])+"""')"""
                 cur = conn.cursor()
