@@ -79,7 +79,8 @@ def saleinfo(sale_id):
                 "payment_cost": sale.payment_cost,
                 "note": sale.note,
                 "date": sale.date,
-                "available": sale.available
+                "available": sale.available,
+                "credit": sale.credit
                 } for sale in sales]
         return {"sale": results}, 200
 # Обновление информации по продаже
@@ -120,7 +121,8 @@ def getsales():
                 "payment_cost": sale.payment_cost,
                 "note": sale.note,
                 "date": sale.date,
-                "available": sale.available
+                "available": sale.available,
+                "credit": sale.credit
                 } for sale in sales]
         return {"sale": results}, 200
 
@@ -162,6 +164,7 @@ def custom_request():
                 "payment_cost": sale.payment_cost,
                 "note": sale.note,
                 "date": sale.date,
-                "available": sale.available
+                "available": sale.available,
+                "credit": sale.credit
                 } for sale in sales]
         return {"sale": results}, 200

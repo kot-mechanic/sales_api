@@ -74,7 +74,10 @@ def paymentinfo_by_p(payment_id):
                 "sale_id": payment.sale_id,
                 "payment_cost": payment.payment_cost,
                 "refund": payment.refund,
-                "date": payment.date
+                "date": payment.date,
+                "sell_type": payment.sell_type,
+                "payment_date": payment.payment_date,
+                "description": payment.description
             } for payment in data]
         return {"payments": results}, 200
 
@@ -89,7 +92,10 @@ def paymentinfo_by_s(sale_id):
                 "sale_id": payment.sale_id,
                 "payment_cost": payment.payment_cost,
                 "refund": payment.refund,
-                "date": payment.date
+                "date": payment.date,
+                "sell_type": payment.sell_type,
+                "payment_date": payment.payment_date,
+                "description": payment.description
             } for payment in data]
         return {"payments": results}, 200
 

@@ -46,6 +46,7 @@ class Sales(db.Model):
     note = db.Column(db.String(200))
     date = db.Column(db.BigInteger)
     available = db.Column(db.Boolean("available"))
+    credit = db.Column(db.Boolean("credit"))
 
     # def __init__(self, sale_id, seller_service_id, user_id, product_id, product_type, rate, cost, promocode, discount, payment_cost, note, date):
     def to_dict(self):
@@ -62,7 +63,8 @@ class Sales(db.Model):
             'payment_cost': self.payment_cost,
             'note': self.note,
             'date': self.date,
-            'available': self.available
+            'available': self.available,
+            'credit': self.credit
         }
 
 
@@ -82,9 +84,10 @@ class Sales(db.Model):
             promocode=json.get('promocode', None),
             discount=json.get('discount', True),
             payment_cost=json.get('payment_cost', None),
-            note=json.get('note', False),
-            date=json.get('date', False),
-            available=json.get('available', True)
+            note=json.get('note', None),
+            date=json.get('date', None),
+            available=json.get('available', True),
+            credit=json.get('credit', False)
         )
 
 
@@ -94,6 +97,10 @@ class Payments(db.Model):
     payment_cost = db.Column(db.Integer)
     refund = db.Column(db.Boolean("refund"))
     date = db.Column(db.BigInteger)
+    sell_type = db.Column(db.String(100))
+    payment_date = db.Column(db.BigInteger)
+    description = db.Column(db.String(500))
+
 
     def to_dict(self):
         return {
@@ -101,7 +108,10 @@ class Payments(db.Model):
             'sale_id': self.sale_id,
             'payment_cost': self.payment_cost,
             'refund': self.refund,
-            'date': self.date
+            'date': self.date,
+            'sell_type': self.sell_type,
+            'payment_date': self.payment_date,
+            'description': self.description
         }
 
     @staticmethod
@@ -111,5 +121,8 @@ class Payments(db.Model):
             sale_id=json.get('sale_id', None),
             payment_cost=json.get('payment_cost', None),
             refund=json.get('refund', False),
-            date=json.get('date', False)
+            date=json.get('date', None),
+            sell_type=json.get('sell_type', None),
+            payment_date=json.get('payment_date', None),
+            description=json.get('description', None)
         )
